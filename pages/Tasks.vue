@@ -17,13 +17,14 @@
                         <input type="text" v-model="description" name="task-description" id="task-description" placeholder="Description">
                       </div>
                       <div class="tasks-button-wrapper">
+                          <span v-if="error">{{error}}</span>
                         <input type="submit" value="Add Task" id="task-button">
                       </div>
                   </form>
               </div>
           </div>
           <div class="tasks">
-              <div class="inputed-tasks" v-for="(todo, index) in todos" :key="index">
+              <div class="inputed-tasks" @dblclick="todo.isCompleted = !todo.isCompleted" v-for="(todo, index) in todos" :key="index" :class="{active: todo.isCompleted}">
                     <div class="tasks-wrapper">
                         <input type="text" name="task-title" id="task-title" :value="todo.title">
                         <input type="text" name="task-description" id="task-description" :value="todo.description">
@@ -46,6 +47,7 @@ export default {
             isHidden:true,
             title: null,
             description: null,
+            error: null,
             todos: [
                 {
                     title: 'drink water',
@@ -67,15 +69,27 @@ export default {
     },
     methods: {
         addNewTask(){
+            this.error = null;
             const title = this.title;
             const description = this.description;
-            const isCompleted = false
+            const isCompleted = false;
+            if(!title) {
+                this.error = 'please add title'
+                return ;
+            };
             const newTask = {
                 title,
                 description,
                 isCompleted
-            }
-            this.todos.push(newTask)
+            };
+            this.todos.push(newTask);
+            this.isHidden = true;
+            this.title = '';
+            this.description = '';
+        },
+        deleteTodo(index) {
+            // this.$delete(this.todos, index);
+            this.todos.splice(index, 1);  // you can write both 
         },
     },
     components: {
@@ -175,5 +189,7 @@ export default {
     border: 5px solid rgb(110, 103, 103);
     border-radius: 10px;
 }
-
+.active{
+    border-left: 8px solid green;
+}
 </style>
